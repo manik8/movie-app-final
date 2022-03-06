@@ -1,24 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+// In this file all the routing is handled
 
-function App() {
+import React, { lazy, Suspense, } from 'react';
+import { Switch, Route, BrowserRouter, } from 'react-router-dom';
+import styled from 'styled-components';
+
+import {
+  openRoutes,
+} from './routes';
+import Loader from './components/atoms/loader';
+
+const Home = lazy(() => 
+  import(/* webpackChunkName: "Home Page" */ './components/pages/home')
+);
+
+const MovieList = lazy(() => 
+  import(/* webpackChunkName: "MovieList Page" */ './components/pages/movieList')
+);
+
+const PageNotFound = lazy(() => 
+  import(/* webpackChunkName: "PageNotFound Page" */ './components/pages/pageNotFound')
+);
+
+const Wrapper = styled.div`
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: ${p => p.theme.WHITE};
+`;
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+      <Suspense fallback={<Loader loaderText={'Loading...'} />}>
+      <BrowserRouter>
+        <Switch>
+          <Route
+            exact
+            path={openRoutes.root}
+            component={Home}
+          />
+          <Route
+            exact
+            path={openRoutes.movies}
+            component={MovieList}
+          />
+          <Route
+            component={PageNotFound}
+          />
+        </Switch>
+       </BrowserRouter> 
+       </Suspense>
+    </Wrapper>
   );
 }
 
